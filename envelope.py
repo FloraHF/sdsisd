@@ -14,7 +14,7 @@ rIcap_min, rIcap_max = r/(sin(gmm)), r/(1-cos(gmm))
 rDcap_min, rDcap_max = rIcap_min*(vd/vi), rIcap_max*(vd/vi)
 
 def envelope_dx(s):
-	vr1, vr2, vtht1, vtht2 = velocity_vec(s[0], s[2], get_phi(s[0], s[2]))
+	vr1, vr2, vtht1, vtht2 = velocity_vec(s[0], s[2], get_phi(s[0], s[2]), backward=False)
 	print('%.5f, %.5f'%(s[0], s[2]))
 	return np.array([vr1, vtht1, vr2, vtht2])
 
@@ -23,7 +23,9 @@ def envelope_barrier(r1, r2, tht1=0, dt=0.05):
 	dtht = acos((r1**2 + r2**2 - r**2)/(2*r1*r2))
 	ss = [np.array([r1, tht1, r2, tht1-dtht])]
 	t = 0
-	while t < 10:
+	while t < 3:
+        if abs(ss[-1][0] - ss[-1][2]) >= r:
+            break
 		s_ = rk4(envelope_dx, ss[-1], dt)
 		ss.append(s_)
 		# print(s_)
@@ -39,9 +41,9 @@ def envelope_barrier(r1, r2, tht1=0, dt=0.05):
 		xs.append(x)
 		# print(sqrt((xd - xi)**2 + (yd - yi)**2))
 	return np.asarray(xs)
-k = .5
-r1 = k*(rDcap_max - rDcap_min) + rDcap_min
-r2 = k*(rIcap_max - rIcap_min) + rIcap_min
+k1, k2 = 0.9, 0.8
+r1 = k1*(rDcap_max - rDcap_min) + rDcap_min
+r2 = k2*(rIcap_max - rIcap_min) + rIcap_min
 # print(get_phi(r1, r2))
 traj = envelope_barrier(r1, r2)
 
@@ -62,4 +64,4 @@ for i, x in enumerate(traj):
 ax.plot(circ[:,0], circ[:,1], '--')
 ax.grid()
 ax.axis('equal')
-plt.show()
+plt.savefig('traj.png')
