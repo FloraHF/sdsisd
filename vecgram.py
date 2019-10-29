@@ -43,27 +43,37 @@ def get_phi(r1, r2):
 		dk = - vi*tan(alpha+phi)*sin(psi) + vd*tan(beta+psi)*sin(phi)
 
 		return dk**2
-
+	
+	# fig, ax = plt.subplots()
+	# dks = []
+	# for phi in np.linspace(-pi, pi, 50):
+	# 	dks.append(dk_dphi(phi))
+	# ax.plot(np.linspace(-pi, pi, 50), dks)
+	# # ax.set_ylim([-1, 50])
+	# plt.show()
 	sol = minimize(dk_dphi, -pi/2)
 	return sol.x
 
 
-# k1, k2 = 0.5, 0.6
-# r1 = k1*(rDcap_max - rDcap_min) + rDcap_min
-# r2 = k2*(rIcap_max - rIcap_min) + rIcap_min
-r1, r2 = 8.33016, 10.32174
+k1, k2 = 0.9, 0.7
+r1 = k1*(rDcap_max - rDcap_min) + rDcap_min
+r2 = k2*(rIcap_max - rIcap_min) + rIcap_min
+print(get_phi(r1, r2))
+# # r1, r2 = 8.33016, 10.32174
 v1s, v2s = [], []
 n = 50
 for phi in np.linspace(-pi, 0.9*pi, n):
 	s = velocity_vec(r1, r2, phi, backward=False)
 	v1s.append(s[0])
 	v2s.append(s[1])
+vphi0 = velocity_vec(r1, r2, 0, backward=False)
 so = velocity_vec(r1, r2, get_phi(r1, r2), backward=False)
 
 fig, ax = plt.subplots()
 ax.plot(v1s, v2s)
 ax.plot(v1s[:3], v2s[:3], 'r.')
 ax.plot(v1s[int(n/2-1):int(n/2+2)], v2s[int(n/2-1):int(n/2+2)], 'y.')
+ax.plot(vphi0[0], vphi0[1], 'k.')
 ax.plot([1.2*so[0], 0], [1.2*so[1], 0], 'r')
 ax.grid()
 # ax.axis('equal')
