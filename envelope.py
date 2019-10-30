@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 from math import sqrt, sin, cos, acos, pi
 import time
@@ -18,7 +19,7 @@ def envelope_barrier(r1, r2, tht1=0, dt=0.03):
 	# with open('data.csv', 'a') as f:
 	# 	f.write(','.join(list(map(str,ss[-1]))) + ',%.5f\n'%get_phi(ss[-1][0], ss[-1][2]))
 	t = 0
-	while t < 80:
+	while t < 30:
 		if abs(ss[-1][0] - ss[-1][2]) >= r - dt*vi:
 			break
 		s_ = rk4(envelope_dx, ss[-1], dt)
@@ -36,10 +37,10 @@ def envelope_barrier(r1, r2, tht1=0, dt=0.03):
 		phis.append(get_phi(s[0], s[2]))
 		rrs.append(s[2]/s[0])
 		# print(sqrt((xd - xi)**2 + (yd - yi)**2))
-	return np.asarray(xs), ss, phis, rrs
+	return np.asarray(xs), np.asarray(ss), phis, rrs
 
 
-k1, k2 = 0.95, 0.95
+k1, k2 = 0.1, 0.05
 r1 = k1*(rDcap_max - rDcap_min) + rDcap_min
 r2 = k2*(rIcap_max - rIcap_min) + rIcap_min
 # print(vi/vd)
@@ -74,8 +75,13 @@ ax.plot(range(len(rrs)), rrs)
 ax.grid()
 plt.show()
 
-fig, ax = plt.subplots()
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.plot(ss[:,0], ss[:,2], ss[:,1]-ss[:,3])
 ax.grid()
+plt.show()
+
+fig, ax = plt.subplots()
 plt.show(block=False)
 for s in ss:
 	draw_vecgram(fig, ax, s[0], s[2])
