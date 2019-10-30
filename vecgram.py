@@ -70,8 +70,12 @@ def get_phi(r1, r2):
     	return (v1 + dv1)**2 + (v2 + dv2)**2
 
     sol = minimize(err_u, 0)
-    if sol.x > 0:
+    err = err_u(sol.x)
+    if sol.x > 0 or err > 1e-6:
     	sol = minimize(err_l, 0)
+    	err = err_l(sol.x)
+    # print(sol.x, err)
+    # print(sol.success, sol.message)
     # sol = minimize(err_l, 0)
     return sol.x
 
@@ -97,6 +101,6 @@ def draw_vecgram(fig, ax, r1, r2):
 	ax.grid()
 	plt.title('phi=%.3f, r=[%.3f, %.3f], r1/r2=%.3f'%(phi_opt, r1, r2, r2/r1))
 	fig.canvas.draw()
-	# ax.grid()
-	# # ax.axis('equal')
-	# plt.show(block=False)
+	ax.grid()
+	# ax.axis('equal')
+	plt.show(block=False)

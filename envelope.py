@@ -19,8 +19,8 @@ def envelope_barrier(r1, r2, tht1=0, dt=0.03):
 	# with open('data.csv', 'a') as f:
 	# 	f.write(','.join(list(map(str,ss[-1]))) + ',%.5f\n'%get_phi(ss[-1][0], ss[-1][2]))
 	t = 0
-	while t < 30:
-		if abs(ss[-1][0] - ss[-1][2]) >= r - dt*vi:
+	while t < 50:
+		if abs(ss[-1][0] - ss[-1][2]) >= r - dt*vi or ss[-1][0] + ss[-1][2] <= r + dt*vi:
 			break
 		s_ = rk4(envelope_dx, ss[-1], dt)
 		ss.append(s_)
@@ -40,19 +40,24 @@ def envelope_barrier(r1, r2, tht1=0, dt=0.03):
 	return np.asarray(xs), np.asarray(ss), phis, rrs
 
 
-k1, k2 = 0.1, 0.05
+k1, k2 = .9, .9
 r1 = k1*(rDcap_max - rDcap_min) + rDcap_min
 r2 = k2*(rIcap_max - rIcap_min) + rIcap_min
+# r1, r2 = 5., 4.7
 # print(vi/vd)
 # print(get_phi(r1, r2))
 traj, ss, phis, rrs = envelope_barrier(r1, r2)
+# fig, ax = plt.subplots()
+# ax.plot(ss[:,0], ss[:,2])
+# ax.grid()
+# plt.show()
 
-# circ = []
-# for tht in np.linspace(0, 2*pi, 50):
-# 	x = r2*cos(tht)
-# 	y = r2*sin(tht)
-# 	circ.append([x, y])
-# circ = np.asarray(circ)
+# # circ = []
+# # for tht in np.linspace(0, 2*pi, 50):
+# # 	x = r2*cos(tht)
+# # 	y = r2*sin(tht)
+# # 	circ.append([x, y])
+# # circ = np.asarray(circ)
 
 fig, ax = plt.subplots()
 ax.plot(traj[:,0], traj[:,1])
@@ -65,24 +70,110 @@ ax.grid()
 ax.axis('equal')
 plt.show()
 
-fig, ax = plt.subplots()
-ax.plot(range(len(phis)), phis)
-ax.grid()
-plt.show()
+# fig, ax = plt.subplots()
+# ax.plot(range(len(phis)), phis)
+# ax.grid()
+# plt.show()
 
-fig, ax = plt.subplots()
-ax.plot(range(len(rrs)), rrs)
-ax.grid()
-plt.show()
+# fig, ax = plt.subplots()
+# ax.plot(range(len(rrs)), rrs)
+# ax.grid()
+# plt.show()
 
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.plot(ss[:,0], ss[:,2], ss[:,1]-ss[:,3])
-ax.grid()
-plt.show()
 
-fig, ax = plt.subplots()
-plt.show(block=False)
-for s in ss:
-	draw_vecgram(fig, ax, s[0], s[2])
-	time.sleep(.1)
+# fig, ax = plt.subplots()
+# ax.plot(ss[:,0], ss[:,2])
+# ax.grid()
+# plt.show()
+
+# fig = plt.figure()
+# ax = fig.add_subplot(111, projection='3d')
+# ax.plot(ss[:,0], ss[:,2], ss[:,1]-ss[:,3])
+# ax.grid()
+# plt.show()
+
+# fig, ax = plt.subplots()
+# # draw_vecgram(fig, ax, 6.1, 5.5)
+# # plt.show()
+# # plt.show(block=False)
+# for s in ss:
+# 	draw_vecgram(fig, ax, s[0], s[2])
+# 	time.sleep(.1)
+# plt.show()
+
+# fig = plt.figure()
+# ax = fig.add_subplot(111, projection='3d')
+
+# k1, k2 = .9, .9
+# r1 = k1*(rDcap_max - rDcap_min) + rDcap_min
+# r2 = k2*(rIcap_max - rIcap_min) + rIcap_min
+# traj, ss, phis, rrs = envelope_barrier(r1, r2)
+# ax.plot(ss[:,0], ss[:,2], ss[:,1]-ss[:,3])
+
+# k1, k2 = .9, .8
+# r1 = k1*(rDcap_max - rDcap_min) + rDcap_min
+# r2 = k2*(rIcap_max - rIcap_min) + rIcap_min
+# traj, ss, phis, rrs = envelope_barrier(r1, r2)
+# ax.plot(ss[:,0], ss[:,2], ss[:,1]-ss[:,3])
+
+# k1, k2 = .9, .7
+# r1 = k1*(rDcap_max - rDcap_min) + rDcap_min
+# r2 = k2*(rIcap_max - rIcap_min) + rIcap_min
+# traj, ss, phis, rrs = envelope_barrier(r1, r2)
+# ax.plot(ss[:,0], ss[:,2], ss[:,1]-ss[:,3])
+
+# k1, k2 = .8, .7
+# r1 = k1*(rDcap_max - rDcap_min) + rDcap_min
+# r2 = k2*(rIcap_max - rIcap_min) + rIcap_min
+# traj, ss, phis, rrs = envelope_barrier(r1, r2)
+# ax.plot(ss[:,0], ss[:,2], ss[:,1]-ss[:,3])
+
+# k1, k2 = .8, .6
+# r1 = k1*(rDcap_max - rDcap_min) + rDcap_min
+# r2 = k2*(rIcap_max - rIcap_min) + rIcap_min
+# traj, ss, phis, rrs = envelope_barrier(r1, r2)
+# ax.plot(ss[:,0], ss[:,2], ss[:,1]-ss[:,3])
+
+# k1, k2 = .8, .5
+# r1 = k1*(rDcap_max - rDcap_min) + rDcap_min
+# r2 = k2*(rIcap_max - rIcap_min) + rIcap_min
+# traj, ss, phis, rrs = envelope_barrier(r1, r2)
+# ax.plot(ss[:,0], ss[:,2], ss[:,1]-ss[:,3])
+
+# k1, k2 = .7, .6
+# r1 = k1*(rDcap_max - rDcap_min) + rDcap_min
+# r2 = k2*(rIcap_max - rIcap_min) + rIcap_min
+# traj, ss, phis, rrs = envelope_barrier(r1, r2)
+# ax.plot(ss[:,0], ss[:,2], ss[:,1]-ss[:,3])
+
+# k1, k2 = .7, .5
+# r1 = k1*(rDcap_max - rDcap_min) + rDcap_min
+# r2 = k2*(rIcap_max - rIcap_min) + rIcap_min
+# traj, ss, phis, rrs = envelope_barrier(r1, r2)
+# ax.plot(ss[:,0], ss[:,2], ss[:,1]-ss[:,3])
+
+# k1, k2 = .6, .5
+# r1 = k1*(rDcap_max - rDcap_min) + rDcap_min
+# r2 = k2*(rIcap_max - rIcap_min) + rIcap_min
+# traj, ss, phis, rrs = envelope_barrier(r1, r2)
+# ax.plot(ss[:,0], ss[:,2], ss[:,1]-ss[:,3])
+
+# k1, k2 = .5, .4
+# r1 = k1*(rDcap_max - rDcap_min) + rDcap_min
+# r2 = k2*(rIcap_max - rIcap_min) + rIcap_min
+# traj, ss, phis, rrs = envelope_barrier(r1, r2)
+# ax.plot(ss[:,0], ss[:,2], ss[:,1]-ss[:,3])
+
+# ax.grid()
+# plt.show()
+
+# fig, ax = plt.subplots()
+# ax.plot(traj[:,0], traj[:,1])
+# ax.plot(traj[:,2], traj[:,3])
+# for i, x in enumerate(traj):
+# 	if i%50 == 0:
+# 		ax.plot([x[0], x[2]], [x[1], x[3]], 'b--')
+# # ax.plot(circ[:,0], circ[:,1], '--')
+# ax.grid()
+# ax.axis('equal')
+# plt.show()
