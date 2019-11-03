@@ -69,14 +69,27 @@ def get_phi(r1, r2):
     	v1, v2, dv1, dv2 = get_v(phi, r1, r2)
     	return (v1 + dv1)**2 + (v2 + dv2)**2
 
-    sol = minimize(err_u, 0)
-    err = err_u(sol.x)
-    if sol.x > 0 or err > 1e-6:
-    	sol = minimize(err_l, 0)
-    	err = err_l(sol.x)
-    # print(sol.x, err)
-    # print(sol.success, sol.message)
-    # sol = minimize(err_l, 0)
+    def err(phi, r1=r1, r2=r2, beta=5.):
+    	v1, v2, dv1, dv2 = get_v(phi, r1, r2)
+    	return min(err_u(phi, r1=r1, r2=r2), err_l(phi, r1=r1, r2=r2))
+
+    sol = minimize(err, -pi/2)
+    # sol_u = minimize(err_u, 0)
+    # err_u = err_u(sol_u.x)
+    # if sol_u.x > 0 or err_u > 1e-4:
+    # 	sol_l = minimize(err_l, 0)
+    # 	err_l = err_l(sol_l.x)
+    # 	sol = sol_l
+    # else:
+    # 	sol = sol_u
+    # sol_l = minimize(err_l, 0)
+    # err_l = err_l(sol_l.x)
+    # if sol_l.x > 0 or err_l > 1e-4:
+    # 	sol_u = minimize(err_u, 0)
+    # 	err_u = err_u(sol_u.x)
+    # 	sol = sol_u
+    # else:
+    # 	sol = sol_l
     return sol.x
 
 def draw_vecgram(fig, ax, r1, r2):
@@ -87,6 +100,7 @@ def draw_vecgram(fig, ax, r1, r2):
 		v1s.append(s[0])
 		v2s.append(s[1])
 	vphi0 = velocity_vec(r1, r2, 0, backward=False)
+	# print(r1, r2, vphi0[0], vphi0[1])
 
 	phi_opt = get_phi(r1, r2)
 	so = velocity_vec(r1, r2, phi_opt, backward=False)
@@ -103,4 +117,4 @@ def draw_vecgram(fig, ax, r1, r2):
 	fig.canvas.draw()
 	ax.grid()
 	# ax.axis('equal')
-	plt.show(block=False)
+	# plt.show(block=False)
