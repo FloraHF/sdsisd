@@ -18,7 +18,7 @@ def envelope_barrier(r1, r2, tht1=0, dt=0.05):
 	dtht = acos((r1**2 + r2**2 - r**2)/(2*r1*r2))
 	ss = [np.array([r1, tht1, r2, tht1-dtht])]
 	t = 0
-	while t < 30:
+	while t < 60:
 		if abs(ss[-1][0] - ss[-1][2]) >= r - dt*vi or ss[-1][0] + ss[-1][2] <= r + dt*vi:
 			print('can\'t cap')
 			break

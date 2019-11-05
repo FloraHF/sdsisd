@@ -3,8 +3,8 @@ import matplotlib.tri as tri
 import os
 import csv
 import numpy as np
-from math import cos, sin, acos
-from vecgram import semipermeable_r
+from math import cos, sin, acos, sqrt
+from vecgram import semipermeable_r, velocity_vec, get_phi, get_phi_max
 
 from Config import Config
 r = Config.CAP_RANGE
@@ -56,7 +56,7 @@ def read_data():
 				X.append(np.asarray(xs))
 				PHI.append(np.asarray(phis))
 				R.append(np.asarray(ratios))
-				print(len(S))
+				# print(len(S))
 	return S, X, PHI, R
 
 def triag_cnstr_1(r1):
@@ -69,7 +69,7 @@ def triag_cnstr_3(r1):
 	return r - r1
 
 def plot_bds(ax, func, n=5):
-	r1s = np.linspace(0, 15., n)
+	r1s = np.linspace(0, 10., n)
 	r2s = np.zeros(n)
 	for i, r1 in enumerate(r1s):
 		r2s[i] = (func(r1))
@@ -79,49 +79,82 @@ def plot_orbit(ax):
 	ax.plot([rDcap_min, rDcap_max], [rIcap_min, rIcap_max], 'k--')
 
 if __name__ == '__main__':
-    ss, xs, phis, rs = read_data()
-    fig, ax = plt.subplots()
-    plot_bds(ax, triag_cnstr_3)
-    plot_bds(ax, triag_cnstr_2)
-    plot_bds(ax, triag_cnstr_1)
-    plot_orbit(ax)
-	# plot_bds(ax, stable_orbit)
-    for s in ss:
-    	ax.plot(s[:,0], s[:,2])
-	# s = ss[20]
-	# print(len(s))
-	# ax.plot(s[1:200,0], s[1:200,2], '-o')
-	# ax.plot(s[0,0], s[0,2], 'ro')
-	# ax.plot(s[-1,0], s[-1,2], 'go')
-		# ax.plot(x[:,2], x[:,3])
 
-    # r1set = np.linspace(1., 10., 32)
-    # r1s, r2s, cs = [], [], []
-    # for r1 in r1set:
-    # 	for r2 in np.linspace(r1-r, r1+0.7*r, 25):
-    # 		if abs((r1**2 + r2**2 - r**2)/(2*r1*r2))<1 and r2 >0:
-    # 			c = semipermeable_r(r1, r2)
-    # 			r1s.append(r1)
-    # 			r2s.append(r2)
-    # 			cs.append(c)
-    # 	for r2 in np.linspace(r1+.71*r, r1+r, 9):
-    # 		if abs((r1**2 + r2**2 - r**2)/(2*r1*r2))<1 and r2>0:
-    # 			c = semipermeable_r(r1, r2)
-    # 			r1s.append(r1)
-    # 			r2s.append(r2)
-    # 			cs.append(c)
+	# print('generating velocity contour')
+	# r1s, r2s, vs = [], [], []
+	# r0s = np.linspace(0.2*r, 5*r, 66)
+	# for r0 in r0s:
+	# 	r1l, r1u = (r0 - r)/2, (r0 + r)/2
+	# 	for r1 in np.linspace(r1l+0.06, r1u-0.06, 66):
+	# 		r2 = r0 - r1
+	# 		if abs((r1**2 + r2**2 - r**2)/(2*r1*r2))<1:
+	# 			r1s.append(r1)
+	# 			r2s.append(r2)	
+	# 		for r2 in np.linspace(r1/vd*vi-0.1, r1/vd*vi+0.1, 5):
+	# 			if abs((r1**2 + r2**2 - r**2)/(2*r1*r2))<1:
+	# 				r1s.append(r1)
+	# 				r2s.append(r2)		
 
-    # xi, yi = np.linspace(3., 7., 12), np.linspace(3., 7., 12)
-    # triang = tri.Triangulation(r1s, r2s)
-    # interpolator = tri.LinearTriInterpolator(triang, cs)
-    # Xi, Yi = np.meshgrid(xi, yi)
-    # zi = interpolator(Xi, Yi)
+	# for r1, r2 in zip(r1s, r2s):
+	# 	vr1, vr2, vtht1, vtht2 = velocity_vec(r1, r2, get_phi(r1, r2))
+	# 	vs.append(vr1)
+	
+	# r1s = np.asarray(r1s)
+	# r2s = np.asarray(r2s)
+	# vs = np.asarray(vs)
 
-    # # fig, ax = plt.subplots()
-    # ax.contour(xi, yi, zi, [.1], linewidths=2, colors='k')
+	# xi, yi = np.linspace(0., 8., 39), np.linspace(0., 8., 39)
+	# triang = tri.Triangulation(r1s, r2s)
+	# interpolator = tri.LinearTriInterpolator(triang, vs)
+	# Xi, Yi = np.meshgrid(xi, yi)
+	# zi = interpolator(Xi, Yi)
 
-    ax.grid()
-    ax.axis('equal')
-    ax.set_xlim([0, 15])
-    ax.set_ylim([0, 15])
-    plt.show()
+	#################### get controur for phi_max=0 ##############
+	print('getting switch line')
+	r1s, r2s, phis = [], [], []
+	r0s = np.linspace(0.2*r, 8*r, 66)
+	for r0 in r0s:
+		r1l, r1u = (r0 - r)/2, (r0 + r)/2
+		for r1 in np.linspace(r1l+0.06, r1u-0.06, 66):
+			r2 = r0 - r1
+			if abs((r1**2 + r2**2 - r**2)/(2*r1*r2))<1:
+				r1s.append(r1)
+				r2s.append(r2)
+				phis.append(get_phi_max(r1, r2)[0])	
+    	# 	for r2 in np.linspace(r1/vd*vi-0.1, r1/vd*vi+0.1, 5):
+    	# 		if abs((r1**2 + r2**2 - r**2)/(2*r1*r2))<1:
+					# r1s.append(r1)
+					# r2s.append(r2)		
+    	
+	r1s = np.asarray(r1s)
+	r2s = np.asarray(r2s)
+	phis = np.asarray(phis)
+
+	xi, yi = np.linspace(1., 10., 50), np.linspace(1., 10., 50)
+	triang = tri.Triangulation(r1s, r2s)
+	interpolator = tri.LinearTriInterpolator(triang, phis)
+	Xi, Yi = np.meshgrid(xi, yi)
+	zi = interpolator(Xi, Yi)
+
+	print('reading trajectory')
+	ss, xs, phis, rs = read_data()
+	fig, ax = plt.subplots()
+	plot_bds(ax, triag_cnstr_3)
+	plot_bds(ax, triag_cnstr_2)
+	plot_bds(ax, triag_cnstr_1)
+	plot_orbit(ax)
+	# ax.contour(xi, yi, zi, levels=14, linewidths=2, colors='k')
+	cntr = ax.contour(xi, yi, zi, [0])
+
+	# fig.colorbar(cntr, ax=ax)
+
+	for i, s in enumerate(ss):
+		# ax.plot(s[:,0], s[:,2], 'bo-', ms=3, markevery=10)
+		if i%5 == 0:
+			ax.plot(s[:,0], s[:,2], 'b')
+
+	ax.grid()
+	ax.axis('equal')
+	ax.set_xlim([0, 10])
+	ax.set_ylim([0, 10])
+	plt.show()

@@ -14,7 +14,7 @@ rIcap_min, rIcap_max = r / (sin(gmm)), r / (1 - cos(gmm))
 rDcap_min, rDcap_max = rIcap_min * (vd / vi), rIcap_max * (vd / vi)
 
 
-def velocity_vec(r1, r2, phi, backward=True):
+def velocity_vec(r1, r2, phi, backward=False):
     psi = acos(vd / vi * cos(phi))
     psi = -abs(psi)
 
@@ -44,35 +44,15 @@ def get_phi(r1, r2):
 
         v1 = -vd * cos(alpha + phi)
         v2 = -vi * cos(beta + psi)
-        v = sqrt(v1 ** 2 + v2 ** 2)
-        v1, v2 = v1 / v, v2 / v
-        #        print(v1**2 + v2**2)
 
-        dv1 = vd * sin(alpha + phi)
-        dv2 = vd * sin(beta + psi) * sin(phi) / sin(psi)
-        dv = sqrt(dv1 ** 2 + dv2 ** 2)
-        dv1, dv2 = dv1 / dv, dv2 / dv
-
-        return v1, v2, dv1, dv2
-
-    # def err_u(phi, r1=r1, r2=r2):
-    #     v1, v2, dv1, dv2 = get_v(phi, r1, r2)
-    #     return (v1 - dv1) ** 2 + (v2 - dv2) ** 2
-
-    # def err_l(phi, r1=r1, r2=r2):
-    #     v1, v2, dv1, dv2 = get_v(phi, r1, r2)
-    #     return (v1 + dv1) ** 2 + (v2 + dv2) ** 2
-
-    # def err(phi, r1=r1, r2=r2, beta=5.):
-    #     v1, v2, dv1, dv2 = get_v(phi, r1, r2)
-    #     return min(err_u(phi, r1=r1, r2=r2), err_l(phi, r1=r1, r2=r2))
+        return v1, v2
 
     def slope_p(phi, r1=r1, r2=r2):
-        v1, v2, dv1, dv2 = get_v(phi, r1, r2)
+        v1, v2 = get_v(phi, r1, r2)
         return atan2(v2, v1)
 
     def slope_n(phi, r1=r1, r2=r2):
-        v1, v2, dv1, dv2 = get_v(phi, r1, r2)
+        v1, v2 = get_v(phi, r1, r2)
         return -atan2(v2, v1)
 
     phi_max_slope = minimize(slope_n, 0).x
@@ -89,6 +69,29 @@ def get_phi(r1, r2):
 
     return sol.x
 
+
+def get_phi_max(r1, r2):
+
+    def get_v(phi, r1, r2):
+        psi = acos(vd / vi * cos(phi))
+        psi = -abs(psi)
+        alpha = acos((r ** 2 + r1 ** 2 - r2 ** 2) / (2 * r1 * r))
+        beta = pi - acos((r ** 2 + r2 ** 2 - r1 ** 2) / (2 * r2 * r))
+
+        v1 = -vd * cos(alpha + phi)
+        v2 = -vi * cos(beta + psi)
+
+        return v1, v2
+
+    def slope_p(phi, r1=r1, r2=r2):
+        v1, v2 = get_v(phi, r1, r2)
+        return atan2(v2, v1)
+
+    def slope_n(phi, r1=r1, r2=r2):
+        v1, v2 = get_v(phi, r1, r2)
+        return -atan2(v2, v1)
+    
+    return minimize(slope_n, 0).x
 
 def draw_vecgram(fig, ax, r1, r2):
     v1s, v2s = [], []
