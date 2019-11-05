@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from math import pi, sqrt, acos, cos, sin, tan
-from scipy.optimize import minimize, minimize_scalar
+from scipy.optimize import minimize, brute
 
 from Config import Config
 r = Config.CAP_RANGE
