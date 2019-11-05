@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from math import pi, sqrt, acos, cos, sin, tan
-from scipy.optimize import minimize, brute
+from math import pi, sqrt, acos, cos, sin, tan, atan2
+from scipy.optimize import minimize, dual_annealing
 
 from Config import Config
 
@@ -55,38 +55,38 @@ def get_phi(r1, r2):
 
         return v1, v2, dv1, dv2
 
-    def err_u(phi, r1=r1, r2=r2):
+    # def err_u(phi, r1=r1, r2=r2):
+    #     v1, v2, dv1, dv2 = get_v(phi, r1, r2)
+    #     return (v1 - dv1) ** 2 + (v2 - dv2) ** 2
+
+    # def err_l(phi, r1=r1, r2=r2):
+    #     v1, v2, dv1, dv2 = get_v(phi, r1, r2)
+    #     return (v1 + dv1) ** 2 + (v2 + dv2) ** 2
+
+    # def err(phi, r1=r1, r2=r2, beta=5.):
+    #     v1, v2, dv1, dv2 = get_v(phi, r1, r2)
+    #     return min(err_u(phi, r1=r1, r2=r2), err_l(phi, r1=r1, r2=r2))
+
+    def slope_p(phi, r1=r1, r2=r2):
         v1, v2, dv1, dv2 = get_v(phi, r1, r2)
-        return (v1 - dv1) ** 2 + (v2 - dv2) ** 2
+        return atan2(v2, v1)
 
-    def err_l(phi, r1=r1, r2=r2):
+    def slope_n(phi, r1=r1, r2=r2):
         v1, v2, dv1, dv2 = get_v(phi, r1, r2)
-        return (v1 + dv1) ** 2 + (v2 + dv2) ** 2
+        return -atan2(v2, v1)
 
-    def err(phi, r1=r1, r2=r2, beta=5.):
-        v1, v2, dv1, dv2 = get_v(phi, r1, r2)
-        return min(err_u(phi, r1=r1, r2=r2), err_l(phi, r1=r1, r2=r2))
+    phi_max_slope = minimize(slope_n, 0).x
+    phi_min_slope = minimize(slope_p, 0).x
+    ang_p = slope_p(phi_max_slope)
+    ang_n = slope_p(phi_min_slope)
+    if ang_p - ang_n > pi:
+        return 0
+    else:
+        if max(phi_max_slope, phi_min_slope) < 0:
+            return max(phi_max_slope, phi_min_slope)
+        else:
+            return min(phi_max_slope, phi_min_slope)
 
-    # for p in np.linspace(-pi, pi, 500):
-    #     print(p, err(p))
-
-    sol = optimize.minimize(err, 0.1, options={'disp': True})
-    # sol_u = minimize(err_u, 0)
-    # err_u = err_u(sol_u.x)
-    # if sol_u.x > 0 or err_u > 1e-4:
-    # 	sol_l = minimize(err_l, 0)
-    # 	err_l = err_l(sol_l.x)
-    # 	sol = sol_l
-    # else:
-    # 	sol = sol_u
-    # sol_l = minimize(err_l, 0)
-    # err_l = err_l(sol_l.x)
-    # if sol_l.x > 0 or err_l > 1e-4:
-    # 	sol_u = minimize(err_u, 0)
-    # 	err_u = err_u(sol_u.x)
-    # 	sol = sol_u
-    # else:
-    # 	sol = sol_l
     return sol.x
 
 
@@ -116,3 +116,32 @@ def draw_vecgram(fig, ax, r1, r2):
     ax.grid()
 # ax.axis('equal')
 # plt.show(block=False)
+
+def semipermeable_r(r1, r2):
+
+    def get_v(phi, r1, r2):
+            psi = acos(vd / vi * cos(phi))
+            psi = -abs(psi)
+            alpha = acos((r ** 2 + r1 ** 2 - r2 ** 2) / (2 * r1 * r))
+            beta = pi - acos((r ** 2 + r2 ** 2 - r1 ** 2) / (2 * r2 * r))
+
+            v1 = -vd * cos(alpha + phi)
+            v2 = -vi * cos(beta + psi)
+
+            return v1, v2
+    
+    def slope_p(phi, r1=r1, r2=r2):
+        v1, v2 = get_v(phi, r1, r2)
+        return atan2(v2, v1)
+
+    def slope_n(phi, r1=r1, r2=r2):
+        v1, v2 = get_v(phi, r1, r2)
+        return -atan2(v2, v1)
+
+    ang_p = slope_p(minimize(slope_n, 0).x)
+    ang_n = slope_p(minimize(slope_p, 0).x)
+    # print(ang_p)
+    # print(ang_n)
+    # print(ang_p - ang_n)
+
+    return pi - (ang_p - ang_n)

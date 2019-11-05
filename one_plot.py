@@ -2,7 +2,7 @@ from envelope import *
 from overall_plot import triag_cnstr_3, triag_cnstr_2, triag_cnstr_1, plot_bds, plot_orbit
 
 if __name__ == '__main__':
-	r1, r2 = 7.3, 8.
+	r1, r2 = 6., 6.5
 	# fig, ax = plt.subplots()
 	# plt.show(block=False)
 	# draw_vecgram(fig, ax, r1, r2)
@@ -34,8 +34,8 @@ if __name__ == '__main__':
 		# ax.plot(x[:,2], x[:,3])
 	ax.grid()
 	ax.axis('equal')
-	ax.set_xlim([0, 10])
-	ax.set_ylim([0, 10])
+	ax.set_xlim([0, 15.])
+	ax.set_ylim([0, 15.])
 	plt.savefig('state.png')
 	plt.show()
 

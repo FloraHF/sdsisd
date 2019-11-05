@@ -10,7 +10,7 @@ def envelope_dx(s):
 	# print('dr: [%.5f, %.5f]'%(s[0], s[2]), 'dv: [%.5f, %.5f]'%(vr1, vr2), 'phi: [%.5f]'%(phi))
 	return np.array([vr1, vtht1, vr2, vtht2])
 
-def envelope_barrier(r1, r2, tht1=0, dt=0.03):
+def envelope_barrier(r1, r2, tht1=0, dt=0.05):
 	fname = 'res/r1_%.3f-r2_%.3f'%(r1, r2)+'/data.csv'
 	if not os.path.isdir('res/r1_%.3f-r2_%.3f'%(r1, r2)+'/'):
 		os.makedirs('res/r1_%.3f-r2_%.3f'%(r1, r2)+'/')
@@ -18,10 +18,11 @@ def envelope_barrier(r1, r2, tht1=0, dt=0.03):
 	dtht = acos((r1**2 + r2**2 - r**2)/(2*r1*r2))
 	ss = [np.array([r1, tht1, r2, tht1-dtht])]
 	t = 0
-	while t < 5:
+	while t < 30:
 		if abs(ss[-1][0] - ss[-1][2]) >= r - dt*vi or ss[-1][0] + ss[-1][2] <= r + dt*vi:
 			print('can\'t cap')
 			break
+		# print(t)
 		s_ = rk4(envelope_dx, ss[-1], dt)
 		ss.append(s_)
 		t += dt

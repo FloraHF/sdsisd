@@ -1,8 +1,10 @@
 import matplotlib.pyplot as plt
+import matplotlib.tri as tri
 import os
 import csv
 import numpy as np
 from math import cos, sin, acos
+from vecgram import semipermeable_r
 
 from Config import Config
 r = Config.CAP_RANGE
@@ -67,7 +69,7 @@ def triag_cnstr_3(r1):
 	return r - r1
 
 def plot_bds(ax, func, n=5):
-	r1s = np.linspace(0, 10., n)
+	r1s = np.linspace(0, 15., n)
 	r2s = np.zeros(n)
 	for i, r1 in enumerate(r1s):
 		r2s[i] = (func(r1))
@@ -77,18 +79,49 @@ def plot_orbit(ax):
 	ax.plot([rDcap_min, rDcap_max], [rIcap_min, rIcap_max], 'k--')
 
 if __name__ == '__main__':
-	ss, xs, phis, rs = read_data()
-	fig, ax = plt.subplots()
-	plot_bds(ax, triag_cnstr_3)
-	plot_bds(ax, triag_cnstr_2)
-	plot_bds(ax, triag_cnstr_1)
-	plot_orbit(ax)
+    ss, xs, phis, rs = read_data()
+    fig, ax = plt.subplots()
+    plot_bds(ax, triag_cnstr_3)
+    plot_bds(ax, triag_cnstr_2)
+    plot_bds(ax, triag_cnstr_1)
+    plot_orbit(ax)
 	# plot_bds(ax, stable_orbit)
-	for s in ss:
-		ax.plot(s[:,0], s[:,2])
+    for s in ss:
+    	ax.plot(s[:,0], s[:,2])
+	# s = ss[20]
+	# print(len(s))
+	# ax.plot(s[1:200,0], s[1:200,2], '-o')
+	# ax.plot(s[0,0], s[0,2], 'ro')
+	# ax.plot(s[-1,0], s[-1,2], 'go')
 		# ax.plot(x[:,2], x[:,3])
-	ax.grid()
-	ax.axis('equal')
-	ax.set_xlim([0, 10])
-	ax.set_ylim([0, 10])
-	plt.show()
+
+    # r1set = np.linspace(1., 10., 32)
+    # r1s, r2s, cs = [], [], []
+    # for r1 in r1set:
+    # 	for r2 in np.linspace(r1-r, r1+0.7*r, 25):
+    # 		if abs((r1**2 + r2**2 - r**2)/(2*r1*r2))<1 and r2 >0:
+    # 			c = semipermeable_r(r1, r2)
+    # 			r1s.append(r1)
+    # 			r2s.append(r2)
+    # 			cs.append(c)
+    # 	for r2 in np.linspace(r1+.71*r, r1+r, 9):
+    # 		if abs((r1**2 + r2**2 - r**2)/(2*r1*r2))<1 and r2>0:
+    # 			c = semipermeable_r(r1, r2)
+    # 			r1s.append(r1)
+    # 			r2s.append(r2)
+    # 			cs.append(c)
+
+    # xi, yi = np.linspace(3., 7., 12), np.linspace(3., 7., 12)
+    # triang = tri.Triangulation(r1s, r2s)
+    # interpolator = tri.LinearTriInterpolator(triang, cs)
+    # Xi, Yi = np.meshgrid(xi, yi)
+    # zi = interpolator(Xi, Yi)
+
+    # # fig, ax = plt.subplots()
+    # ax.contour(xi, yi, zi, [.1], linewidths=2, colors='k')
+
+    ax.grid()
+    ax.axis('equal')
+    ax.set_xlim([0, 15])
+    ax.set_ylim([0, 15])
+    plt.show()
