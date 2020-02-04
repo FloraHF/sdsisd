@@ -1,4 +1,6 @@
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.rcParams['text.usetex'] = True
 import numpy as np
 from math import pi, sqrt, acos, cos, sin, tan, atan2
 from scipy.optimize import minimize, dual_annealing
@@ -56,16 +58,24 @@ def get_phi(r1, r2):
         return -atan2(v2, v1)
 
     phi_max_slope = minimize(slope_n, 0).x
-    phi_min_slope = minimize(slope_p, 0).x
+    phi_min_slope = minimize(slope_p, -.0001).x
     ang_p = slope_p(phi_max_slope)
     ang_n = slope_p(phi_min_slope)
     if ang_p - ang_n > pi:
+        # print(ang_p, ang_n)
+        # print('set 0')
         return 0
     else:
-        if max(phi_max_slope, phi_min_slope) < 0:
-            return max(phi_max_slope, phi_min_slope)
+        # if max(phi_max_slope, phi_min_slope) < 0:
+        #     print('compute: both < 0')
+        #     return max(phi_max_slope, phi_min_slope)
+        # else:
+        #     print('compute: one < 0, chose smaller')
+        #     return min(phi_max_slope, phi_min_slope)
+        if ang_p > 0:
+            return phi_max_slope
         else:
-            return min(phi_max_slope, phi_min_slope)
+            return phi_min_slope
 
     return sol.x
 
@@ -93,10 +103,10 @@ def get_phi_max(r1, r2):
     
     return minimize(slope_n, 0).x
 
-def draw_vecgram(fig, ax, r1, r2):
+def draw_vecgram(r1, r2, id):
     v1s, v2s = [], []
-    n = 50
-    for phi in np.linspace(-pi, 0.9 * pi, n):
+    phis = np.concatenate([np.linspace(-pi, 0, 30),np.linspace(0.0, pi, 30), np.array([-pi])])
+    for phi in phis:
         s = velocity_vec(r1, r2, phi, backward=False)
         v1s.append(s[0])
         v2s.append(s[1])
@@ -106,19 +116,25 @@ def draw_vecgram(fig, ax, r1, r2):
     phi_opt = get_phi(r1, r2)
     so = velocity_vec(r1, r2, phi_opt, backward=False)
 
-    # fig, ax = plt.subplots()
-    ax.clear()
-    ax.plot(v1s, v2s)
-    ax.plot(v1s[:3], v2s[:3], 'r.')
-    ax.plot(v1s[int(n / 2 - 1):int(n / 2 + 2)], v2s[int(n / 2 - 1):int(n / 2 + 2)], 'y.')
-    ax.plot(vphi0[0], vphi0[1], 'k.')
+    fig, ax = plt.subplots()
+    # ax.clear()
+    ax.plot(v1s[0:30], v2s[0:30], 'k-', label=r'$\phi\leq0$')
+    ax.plot(v1s[30:-1], v2s[30:-1], 'k--', label=r'$\phi>0$')
+    ax.plot(v1s[:1], v2s[:1], 'b.', label=r'$\phi = -\pi$')
+    # ax.plot(v1s[29:30], v2s[29:30], 'y.')
+    ax.plot(vphi0[0], vphi0[1], 'g.', label=r'$\phi = 0$')
     ax.plot([1.01 * so[0], 0], [1.01 * so[1], 0], 'r')
+    ax.legend(fontsize=12)
+    plt.xlabel(r'$\dot{\rho}_D$', fontsize=14)
+    plt.ylabel(r'$\dot{\rho}_I$', fontsize=14)
     ax.grid()
-    plt.title('phi=%.3f, r=[%.3f, %.3f], r1/r2=%.3f' % (phi_opt, r1, r2, r2 / r1))
-    fig.canvas.draw()
-    ax.grid()
-# ax.axis('equal')
-# plt.show(block=False)
+    plt.title(r'$\phi=%.3f$, $(\rho_D, \rho_I)=(%.3f, %.3f)$' % (phi_opt, r1, r2), fontsize=14)
+    # fig.canvas.draw()
+    # ax.grid()
+    ax.axis('equal')
+    # plt.show()
+    plt.savefig('vecgram_'+str(id)+'.png')
+    plt.close('all')
 
 def semipermeable_r(r1, r2):
 

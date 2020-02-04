@@ -17,6 +17,7 @@ def envelope_barrier(r1, r2, tht1=0, dt=0.05):
 
 	dtht = acos((r1**2 + r2**2 - r**2)/(2*r1*r2))
 	ss = [np.array([r1, tht1, r2, tht1-dtht])]
+	ts = [0]
 	t = 0
 	while t < 60:
 		if abs(ss[-1][0] - ss[-1][2]) >= r - dt*vi or ss[-1][0] + ss[-1][2] <= r + dt*vi:
@@ -26,6 +27,7 @@ def envelope_barrier(r1, r2, tht1=0, dt=0.05):
 		s_ = rk4(envelope_dx, ss[-1], dt)
 		ss.append(s_)
 		t += dt
+		ts.append(t)
 	xs, phis, rrs = [], [], []
 	for s in ss:
 		# pritn(s)
@@ -41,7 +43,7 @@ def envelope_barrier(r1, r2, tht1=0, dt=0.05):
 		with open(fname, 'a') as f:
 			f.write(','.join(list(map(str, s)))+',%.10f\n'%phi)
 		# print(sqrt((xd - xi)**2 + (yd - yi)**2))
-	return np.asarray(xs), np.asarray(ss), phis, rrs
+	return np.asarray(xs), np.asarray(ss), phis, rrs, np.asarray(ts)
 
 
 # k1, k2 = 1.7, 1.2
