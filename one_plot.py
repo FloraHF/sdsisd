@@ -7,9 +7,15 @@ import matplotlib.tri as tri
 
 if __name__ == '__main__':
 
-	# r1, r2 = 6.5, 6.54 # barrier
-	r1, r2 = 6.5, 6.1 # iwin
+	r1, r2 = 6.5, 6.54 # barrier
+	# resfig = [0, 15, 65, 89]
+	# r1, r2 = 6.5, 6.1 # iwin
+	# resfig = [0, 20, 50, 56]
+	# resfig = [0, 50, 90, 105, 110, 195, 210, 230, 240, 1200]
 	# r1, r2 = 6.1, 6.6 # dwin
+	# resfig = [0, 50, 90, 105, 110, 195, 210, 230, 240, 1200]
+
+
 	traj, ss, phis, rrs, ts = envelope_barrier(r1, r2)
 
 	fig, ax = plt.subplots()
@@ -55,8 +61,14 @@ if __name__ == '__main__':
 	# plt.show()
 
 	########################## vecgram ###########################
+	k = 0
 	for i, s in enumerate(ss):
-		if i%1 == 0:
-			draw_vecgram(s[0], s[2], i)
+		# print(i)
+		if i in [0, 15, 65, 89]:
+			print(k)
+			print(i)
+		# if i in resfig:
+			draw_vecgram(s[0], s[2], i, k)
+			k = k+1
 			# time.sleep(.1)
 	plt.show()

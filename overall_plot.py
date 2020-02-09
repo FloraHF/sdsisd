@@ -178,8 +178,12 @@ if __name__ == '__main__':
 
 	r1, r2 = read_switchline()
 
+	line2x = [2.36, 2.5, 2.71, 2.85, 3.196, 4.605, 5.952, 7.518]
+	line2y = [0.47, 0.64, 0.88, 1.04, 1.42, 2.93, 4.317, 5.9015]
+
 	fig, ax = plt.subplots()
 	ax.plot(r1, r2, 'b--', alpha=0.6, label='switch line', zorder=1000, linewidth=2.)
+	ax.plot(line2x, line2y, 'b--', alpha=0.6, zorder=1000, linewidth=2.)
 
 	# print('reading trajectory')
 	ss, xs, phis, rs = read_data()

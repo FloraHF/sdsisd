@@ -103,7 +103,8 @@ def get_phi_max(r1, r2):
     
     return minimize(slope_n, 0).x
 
-def draw_vecgram(r1, r2, id):
+def draw_vecgram(r1, r2, id, capid):
+    capfig = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
     v1s, v2s = [], []
     phis = np.concatenate([np.linspace(-pi, 0, 30),np.linspace(0.0, pi, 30), np.array([-pi])])
     for phi in phis:
@@ -124,11 +125,12 @@ def draw_vecgram(r1, r2, id):
     # ax.plot(v1s[29:30], v2s[29:30], 'y.')
     ax.plot(vphi0[0], vphi0[1], 'g.', label=r'$\phi = 0$')
     ax.plot([1.01 * so[0], 0], [1.01 * so[1], 0], 'r')
-    ax.legend(fontsize=12)
-    plt.xlabel(r'$\dot{\rho}_D$', fontsize=14)
-    plt.ylabel(r'$\dot{\rho}_I$', fontsize=14)
+    ax.legend(fontsize=14)
+    plt.xlabel(r'$\dot{\rho}_D$', fontsize=16)
+    plt.ylabel(r'$\dot{\rho}_I$', fontsize=16)
     ax.grid()
-    plt.title(r'$\phi=%.3f$, $(\rho_D, \rho_I)=(%.3f, %.3f)$' % (phi_opt, r1, r2), fontsize=14)
+    # plt.title(r'$\phi=%.3f$, $(\rho_D, \rho_I)=(%.3f, %.3f)$' % (phi_opt, r1, r2), fontsize=14)
+    plt.title(r'('+capfig[capid]+')', fontsize=16)
     # fig.canvas.draw()
     # ax.grid()
     ax.axis('equal')
