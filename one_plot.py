@@ -7,20 +7,20 @@ import matplotlib.tri as tri
 
 if __name__ == '__main__':
 
-	r1, r2 = 6.5, 6.54 # barrier
+	# r1, r2 = 6.5, 6.54 # barrier
 	# resfig = [0, 15, 65, 89]
 	# r1, r2 = 6.5, 6.1 # iwin
 	# resfig = [0, 20, 50, 56]
 	# resfig = [0, 50, 90, 105, 110, 195, 210, 230, 240, 1200]
-	# r1, r2 = 6.1, 6.6 # dwin
+	r1, r2 = 6.1, 6.6 # dwin
 	# resfig = [0, 50, 90, 105, 110, 195, 210, 230, 240, 1200]
 
 
 	traj, ss, phis, rrs, ts = envelope_barrier(r1, r2)
 
 	fig, ax = plt.subplots()
-	ax.plot(traj[:,0], traj[:,1], 'b', alpha=0.8)
-	ax.plot(traj[:,2], traj[:,3], color='xkcd:crimson', alpha=0.8)
+	ax.plot(traj[:,0], traj[:,1], 'b', alpha=0.8, marker='o', markevery=50)
+	ax.plot(traj[:,2], traj[:,3], color='xkcd:crimson', marker='o', alpha=0.8, markevery=50)
 	for i, x in enumerate(traj):
 		if i%50 == 0:
 			ax.plot([x[0], x[2]], [x[1], x[3]], 'k--')
@@ -39,7 +39,7 @@ if __name__ == '__main__':
 	fig, ax = plt.subplots()
 	ax.plot(ts, np.asarray(phis)*180/pi, 'b.-', markevery=5)
 	plt.xlabel('time', fontsize=14)
-	plt.ylabel(r'$\phi(^\circ)$', fontsize=14)
+	plt.ylabel(r'$\phi_D^\ast(^\circ)$', fontsize=14)
 	ax.grid()
 	plt.show()
 
@@ -61,14 +61,15 @@ if __name__ == '__main__':
 	# plt.show()
 
 	########################## vecgram ###########################
-	k = 0
-	for i, s in enumerate(ss):
-		# print(i)
-		if i in [0, 15, 65, 89]:
-			print(k)
-			print(i)
-		# if i in resfig:
-			draw_vecgram(s[0], s[2], i, k)
-			k = k+1
-			# time.sleep(.1)
-	plt.show()
+	# k = 0
+	# for i, s in enumerate(ss):
+	# 	# print(i)
+	# 	# if i in [0, 15, 65, 89]:
+	# 	# 	print(k)
+	# 	# 	print(i)
+	# 	if i%10 == 0:
+	# 	# if i in resfig:
+	# 		draw_vecgram(s[0], s[2], i, k)
+	# 		k = k+1
+	# 		# time.sleep(.1)
+	# plt.show()
