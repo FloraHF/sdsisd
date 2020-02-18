@@ -1,6 +1,7 @@
 import matplotlib 
 matplotlib.rc('xtick', labelsize=14) 
-matplotlib.rc('ytick', labelsize=14) 
+matplotlib.rc('ytick', labelsize=14)
+from celluloid import Camera
 from envelope import *
 from overall_plot import triag_cnstr_3, triag_cnstr_2, triag_cnstr_1, plot_bds, plot_orbit
 import matplotlib.tri as tri
@@ -62,14 +63,15 @@ if __name__ == '__main__':
 
 	########################## vecgram ###########################
 	# k = 0
-	# for i, s in enumerate(ss):
-	# 	# print(i)
-	# 	# if i in [0, 15, 65, 89]:
-	# 	# 	print(k)
-	# 	# 	print(i)
-	# 	if i%10 == 0:
-	# 	# if i in resfig:
-	# 		draw_vecgram(s[0], s[2], i, k)
-	# 		k = k+1
-	# 		# time.sleep(.1)
+	for i, s in enumerate(ss):
+		print(i)
+		# print(i)
+		# if i in [0, 15, 65, 89]:
+		# 	print(k)
+		# 	print(i)
+		# if i%10 == 0:
+		# if i in resfig:
+		draw_vecgram(s[0], s[2], i, 0)
+		
+			# time.sleep(.1)
 	# plt.show()

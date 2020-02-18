@@ -138,6 +138,32 @@ def draw_vecgram(r1, r2, id, capid):
     plt.savefig('vecgram_'+str(id)+'.png')
     plt.close('all')
 
+def draw_vecgram_animation(ax, r1, r2):
+    v1s, v2s = [], []
+    phis = np.concatenate([np.linspace(-pi, 0, 30),np.linspace(0.0, pi, 30), np.array([-pi])])
+    for phi in phis:
+        s = velocity_vec(r1, r2, phi, backward=False)
+        v1s.append(s[0])
+        v2s.append(s[1])
+    vphi0 = velocity_vec(r1, r2, 0, backward=False)
+
+    phi_opt = get_phi(r1, r2)
+    so = velocity_vec(r1, r2, phi_opt, backward=False)
+
+    ax.plot(v1s[0:30], v2s[0:30], 'k-')
+    ax.plot(v1s[30:-1], v2s[30:-1], 'k--')
+    ax.plot(v1s[:1], v2s[:1], 'b.')
+    # ax.plot(v1s[29:30], v2s[29:30], 'y.')
+    ax.plot(vphi0[0], vphi0[1], 'g.')
+    ax.plot([1.01 * so[0], 0], [1.01 * so[1], 0], 'r')
+    
+    ax.legend([r'$\phi\leq0$', r'$\phi>0$', r'$\phi = -\pi$', r'$\phi = 0$'], fontsize=11, loc="upper left")
+    # ax.set_xlabel(r'$\dot{\rho}_D$', fontsize=16)
+    # ax.set_ylabel(r'$\dot{\rho}_I$', fontsize=16)
+    # ax.grid()
+    # ax.axis('equal')
+
+
 def semipermeable_r(r1, r2):
 
     def get_v(phi, r1, r2):
